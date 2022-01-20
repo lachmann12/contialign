@@ -32,6 +32,19 @@ use pbr::ProgressBar;
 
 use fnv::FnvHashMap;
 
+pub fn reverse_read(read: String) -> String {
+    let s:String = read.chars()
+        .map(|x| match x { 
+            'A' => 'T', 
+            'T' => 'A',
+            'G' => 'C', 
+            'C' => 'G',
+            _ => x
+    }).rev().collect();
+
+    return s;
+}
+
 pub fn split_contigs(sequence: &str, contig_length: i32) -> Vec<String> {
 
     let mut contigs = vec![];
@@ -40,7 +53,7 @@ pub fn split_contigs(sequence: &str, contig_length: i32) -> Vec<String> {
             let contig = sequence[i..(((i as i32)+contig_length) as usize)].to_string();
             contigs.push(contig);
         }
-    }   
+    }
 
     return contigs;
 }
@@ -70,6 +83,24 @@ pub fn contig_index(sequences: Vec<String>, contig_length: i32)  -> std::io::Res
                 uni = uni + 1;
                 let mut temp = HashSet::new();
                 temp.insert(i as i32);
+                equivalence_classes.insert(hash_result, temp);
+            }
+            all = all+1;
+        }
+
+        let contigs = split_contigs(&sequences[i], 12);
+        for j in 1..contigs.len() {
+            let mut hasher = DefaultHasher::new();
+            contigs[j].hash(&mut hasher);
+            hash_result = hasher.finish() as u32;
+            if equivalence_classes.contains_key(&hash_result) {
+                let mut temp = equivalence_classes.get_mut(&hash_result).unwrap();
+                temp.insert(i as i32);
+            }
+            else {
+                uni = uni + 1;
+                let mut temp = HashSet::new();
+                temp.insert((i+1000000) as i32);
                 equivalence_classes.insert(hash_result, temp);
             }
             all = all+1;
@@ -127,8 +158,5 @@ pub fn contig_index_vec(sequences: Vec<String>, contig_length: i32) {
     let res = bincode::serialize(&equivalence_classes).unwrap();
     fs::write("binary.idx", res).unwrap();
 
-    //let file = File::create("index.json")?;
-    //let mut writer = BufWriter::new(file);
-    //serde_json::to_writer(&mut writer, &equivalence_classes)?;
-    //writer.flush()?;
+    std::thread::spawn(move || drop(sequences));
 }
