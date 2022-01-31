@@ -60,7 +60,7 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
     
     let mut line_count: i64 = 0;
     let f = BufReader::new(File::open(input_file).unwrap());
-    for (_i, line) in f.lines() {
+    for line in f.lines() {
         line_count = line_count+1;
 
         if line_count == 2 {
