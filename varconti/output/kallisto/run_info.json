@@ -1,13 +1,13 @@
 {
 	"n_targets": 202897,
 	"n_bootstraps": 0,
-	"n_processed": 2584276,
-	"n_pseudoaligned": 1143665,
-	"n_unique": 324804,
-	"p_pseudoaligned": 44.3,
-	"p_unique": 12.6,
+	"n_processed": 5809046,
+	"n_pseudoaligned": 5384509,
+	"n_unique": 794378,
+	"p_pseudoaligned": 92.7,
+	"p_unique": 13.7,
 	"kallisto_version": "0.46.1",
 	"index_version": 10,
-	"start_time": "Tue Jan 18 12:00:56 2022",
-	"call": "kallisto.exe quant -i human.idx --single -l 200 -o ../output/kallisto -s 20 ../files/SRR3534129.fastq"
+	"start_time": "Mon Jan 31 00:23:57 2022",
+	"call": "external/kallisto.exe quant -i output/kallisto/human.idx -o output/kallisto/ --single -l 200 -s 20 files/SRR1525256.fastq"
 }

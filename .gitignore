@@ -1,4 +1,6 @@
 *.fa
 *.idx
 *.fastq
+*.h5
+*.tsv
 varconti/target/*
