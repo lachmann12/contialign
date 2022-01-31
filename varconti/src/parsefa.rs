@@ -21,7 +21,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     
     let mut sequence_count = 0;
     let f = BufReader::new(File::open(input_file).unwrap());
-    for (_i, line) in f.lines().enumerate() {
+    for line in f.lines() {
 
         let lw = line.unwrap();
         if &lw[..1] == ">" {
