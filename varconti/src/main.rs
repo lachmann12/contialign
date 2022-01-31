@@ -55,7 +55,7 @@ fn main() -> Result<(), Error> {
     let output_counts = "output/counts.tsv";
     //let fastq_file = "files/SRR3534129.fastq";
     let fastq_file = "files/SRR1525256.fastq";
-    let build_index = true;
+    let build_index = false;
 
     if build_index{
         println!("{}", format!("[{}] Build index | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), genome_file, kmer_length).blue());
