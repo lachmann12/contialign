@@ -49,8 +49,9 @@ pub fn remove_n(read: String) -> Vec<String> {
     return result;
 }
 
-pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, _kmer_offset: &u32, step_size: u32, sensitivity: u32) -> (i64, HashMap<u32, u32>, i64) {
+pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, _kmer_offset: &u32, step_size: u32, sensitivity: u32) -> (i64, HashMap<u32, u32>, HashMap<u32, u32>, i64) {
 
+    let mut transcript_counts_unique: HashMap<u32, u32> = HashMap::new();
     let mut transcript_counts: HashMap<u32, u32> = HashMap::new();
 
     let mut seq: String;
@@ -71,6 +72,8 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
     let mut total_match_count = 0;
     let mut unique_counter = 0;
 
+    let mut max_tc = 0;
+
     let mut pb = ProgressBar::new(line_count as u64/4);
     pb.set_max_refresh_rate(Some(Duration::from_millis(200)));
     pb.message("     -> aligning | ");
@@ -85,70 +88,63 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
             seq = line.unwrap().to_string().clone();
             
             if seq.contains("N") {
-                //ncounter += 1;
+                
                 let na_replaced = remove_n(seq.clone());
                 for seq in na_replaced {
-                    let (match_counter, matches, is_unique) = get_matches(seq, eq_classes, eq_elements, kmer_length, step_size);
-                    total_match_count = total_match_count + match_counter;
                     
+                    let (mut match_counter, mut matches, mut is_unique) = get_matches_control(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length, sensitivity);
+
                     if matches.len() > 0 {
                         if matches.len() == 1 {
                             let temp = matches[0];
-                            let counter_tmp = transcript_counts.entry(temp).or_insert(0);
-                            *counter_tmp += 1;
-                            break;
+                            *transcript_counts.entry(temp).or_insert(0) += 1;
+                            if is_unique {
+                                *transcript_counts_unique.entry(temp).or_insert(0) += 1;
+                                unique_counter += 1;
+                            }
+                            
                         }
                         else {
                             let (top_transcript, max_count) = most_frequent(&matches,1);
                             let temp = top_transcript.clone() as u32;
-                            if max_count > 0 {
-                                let counter_tmp = transcript_counts.entry(temp).or_insert(0);
-                                *counter_tmp += 1;
-                            }
-                            break;
+                            //if max_count > sensitivity {
+                                *transcript_counts.entry(temp).or_insert(0) += 1;
+                                
+                                if is_unique {
+                                    *transcript_counts_unique.entry(temp).or_insert(0) += 1;
+                                    unique_counter += 1;
+                                }
+                                
+                            //}
                         }
+                        break;
                     }
                 }
             }
             else {
-                let (mut match_counter, mut matches, mut is_unique) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length);
-                if match_counter < sensitivity {
-                    let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/2);
-                    match_counter = match_counter_t;
-                    matches = matches_t;
-                    is_unique = is_unique_t;
-                }
-                if match_counter < sensitivity {
-                    let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/4);
-                    match_counter = match_counter_t;
-                    matches = matches_t;
-                    is_unique = is_unique_t;
-                }
-                if match_counter < sensitivity {
-                    let (match_counter_t, matches_t, is_unique_t) = get_matches(seq, eq_classes, eq_elements, kmer_length, step_size);
-                    match_counter = match_counter_t;
-                    matches = matches_t;
-                    is_unique = is_unique_t;
-                }
-                
-                total_match_count = total_match_count + match_counter;
+                let (mut match_counter, mut matches, mut is_unique) = get_matches_control(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length, sensitivity);
                 
                 if matches.len() > 0 {
-                    if matches.len() == 1 && false {
+                    if matches.len() == 1 {
                         let temp = matches[0];
-                        let counter_tmp = transcript_counts.entry(temp).or_insert(0);
-                        *counter_tmp += 1;
+                        *transcript_counts.entry(temp).or_insert(0) += 1;
+                        if is_unique {
+                            *transcript_counts_unique.entry(temp).or_insert(0) += 1;
+                            unique_counter += 1;
+                        }
                     }
                     else {
                         let (top_transcript, max_count) = most_frequent(&matches,1);
                         let temp = top_transcript.clone() as u32;
-                        if max_count > sensitivity {
-                            let counter_tmp = transcript_counts.entry(temp).or_insert(0);
-                            *counter_tmp += 1;
+                        //if max_count > sensitivity {
+                            
+                            *transcript_counts.entry(temp).or_insert(0) += 1;
+
                             if is_unique {
+                                *transcript_counts_unique.entry(temp).or_insert(0) += 1;
                                 unique_counter += 1;
                             }
-                        }
+                        //}
                     }
                 }
             }
@@ -158,9 +154,36 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
     }
     pb.finish_print(&format!("[{}] alignment completed", Local::now().format("%Y-%m-%d][%H:%M:%S")).green());
     println!("");
-    
-    //println!("N counts: {}", ncounter);
-    return (line_count, transcript_counts, unique_counter);
+
+    return (line_count, transcript_counts_unique, transcript_counts, unique_counter);
+}
+
+pub fn get_matches_control(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32, sensitivity: u32) -> (u32, Vec<u32>, bool) {
+    let (mut match_counter, mut matches, mut is_unique) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length);
+    if match_counter < sensitivity {
+        let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/2);
+        match_counter = match_counter_t;
+        matches = matches_t;
+        is_unique = is_unique_t;
+    }
+    if match_counter < sensitivity {
+        let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/4);
+        match_counter = match_counter_t;
+        matches = matches_t;
+        is_unique = is_unique_t;
+    }
+    if match_counter < sensitivity {
+        let (match_counter_t, matches_t, is_unique_t) = get_matches(seq, eq_classes, eq_elements, kmer_length, step_size);
+        match_counter = match_counter_t;
+        matches = matches_t;
+        is_unique = is_unique_t;
+    }
+
+    if match_counter < sensitivity {
+
+    }
+
+    return (match_counter, matches, is_unique);
 }
 
 pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32) -> (u32, Vec<u32>, bool){
@@ -191,9 +214,9 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
                     matches.extend(eq_elements.get(p).unwrap());
                 }
                 else{
-                    let mut u: Vec<u32> = vec![];
-                    u.push(*p);
-                    matches.extend(u);
+                    matches = vec![];
+                    matches.push(*p);
+                    is_unique = true;
                     break;
                 }
             }
@@ -215,9 +238,9 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
                     matches.extend(eq_elements.get(p).unwrap());
                 }
                 else{
-                    let mut u: Vec<u32> = vec![];
-                    u.push(*p);
-                    matches.extend(u);
+                    matches = vec![];
+                    matches.push(*p);
+                    is_unique = true;
                     break;
                 }
             }
@@ -232,8 +255,7 @@ pub fn most_frequent<T: std::hash::Hash + std::cmp::Eq + std::cmp::Ord>(array: &
     let mut map = HashMap::new();
 
     for value in array {
-        let counter = map.entry(value).or_insert(0);
-        *counter += 1;
+        *map.entry(value).or_insert(0) += 1;
     }
 
     let mut heap: BinaryHeap<_> = map.values().collect();

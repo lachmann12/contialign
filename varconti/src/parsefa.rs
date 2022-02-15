@@ -6,15 +6,16 @@ use pbr::ProgressBar;
 use std::time::Duration;
 
 use std::hash::{Hash, Hasher};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::DefaultHasher;
 
 extern crate chrono;
 use chrono::Local;
 use colored::*;
 
-pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>) {
+pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>) {
 
+    let mut transcript_kmers: HashMap<u32, u32> = HashMap::new();
     let mut eq_classes: HashMap<u32, u32> = HashMap::new();
     let mut eq_elements: HashMap<u32, Vec<u32>> = HashMap::new();
     let mut all = 0;
@@ -44,7 +45,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
 
     for line in f.lines() {
         tc += 1;
-        let lw = line.unwrap();
+        let lw = line.unwrap().to_uppercase();
 
         if &lw[..1] == ">" {
             
@@ -70,30 +71,31 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
                             // 4. Insert new set in eq_classes_map if does not exist
                             let mut elements = eq_elements.get_mut(&elements_pointer).unwrap().clone();
                             
-                            if elements.len() < 30 {
-                                let mut testin = false;
-                                for k in 0..elements.len() {
-                                    if elements[k] == counter{
-                                        testin = true;
-                                        break;
-                                    }
-                                }
-                                if !testin {
-                                    elements.push(counter);
-                                    let elements_hash = listhash(&elements);
-                                    eq_classes.insert(kmer_hash, elements_hash);
-                                    if !eq_elements.contains_key(&elements_hash) {
-                                        eq_elements.insert(elements_hash, elements);
-                                    }
+                            let mut testin = false;
+                            for k in 0..elements.len() {
+                                if elements[k] == counter{
+                                    testin = true;
+                                    break;
                                 }
                             }
+                            if !testin {
+                                elements.push(counter);
+                                elements.sort();
+                                let elements_hash = listhash(&elements);
+                                eq_classes.insert(kmer_hash, elements_hash);
+                                if !eq_elements.contains_key(&elements_hash) {
+                                    eq_elements.insert(elements_hash, elements);
+                                }
+                            }
+                        
                         }
                         else {
                             // new EQ class
                             let mut elements = vec![];
                             elements.push(elements_pointer.clone());
                             elements.push(counter.clone());
-                            
+                            elements.sort();
+
                             let elements_hash: u32 = listhash(&elements);
                             eq_classes.insert(kmer_hash, elements_hash);
                             
@@ -103,10 +105,12 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
                         }
                     }
                     else {
-                        eq_classes.insert(kmer_hash, counter);
+                        eq_classes.insert(kmer_hash, counter.clone());
                     }
                     all = all+1;
                 }
+
+                transcript_kmers.insert(counter, kmers.len() as u32);
                 counter += 1;
             }
 
@@ -124,17 +128,10 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     let mut pb = ProgressBar::new(eq_classes.len() as u64);
     pb.set_max_refresh_rate(Some(Duration::from_millis(200)));
     pb.message("     -> cleaning classes | ");
-    //let mut total = 0;
-    let mut counter = 1;
-    for _k in eq_classes.keys() {
-        counter = counter + 1;
-        if counter % 100000 == 0 {
-            pb.set(counter);
-        }
-        //if eq_classes_map.contains_key(eq_classes.get(k).unwrap()) {
-        //    total += 1;
-        //}
-    }
+    
+    let mut counter2 = 1;
+
+    let (mut eq_classes, mut eq_elements) = purge_disconnected(eq_classes, eq_elements);
 
     let mut sum_elements = 0;
     for k in eq_elements.keys() {
@@ -147,7 +144,8 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     println!("Total: {}", total);
     println!("EQ elements: {}", eq_elements.len());
     println!("Avg length elements: {}", sum_elements/eq_elements.len());
-    return (transcripts, eq_classes, eq_elements);
+    println!("final counter (max element): {}", counter);
+    return (transcripts, eq_classes, eq_elements, transcript_kmers);
 }
 
 pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
@@ -171,4 +169,20 @@ pub fn listhash(input: &Vec<u32>) -> u32 {
     let mut h = DefaultHasher::new();
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
+}
+
+pub fn purge_disconnected(eq_classes: HashMap<u32, u32>, eq_elements: HashMap<u32, Vec<u32>>) -> (HashMap<u32, u32>, HashMap<u32, Vec<u32>>){
+    
+    let mut hh = HashSet::new();
+    for k in eq_classes.keys() {
+        hh.insert(eq_classes.get(k).unwrap());
+    }
+    
+    let mut eqtemp = eq_elements.clone();
+    for k in eq_elements.keys() {
+        if !hh.contains(&k) {
+            eqtemp.remove(k);
+        }
+    }
+    return (eq_classes, eqtemp);
 }
