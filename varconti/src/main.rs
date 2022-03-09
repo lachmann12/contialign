@@ -17,6 +17,7 @@ use chrono::Local;
 
 mod serializer;
 mod indexscan;
+mod em;
 
 use colored::*;
 
@@ -47,6 +48,10 @@ pub fn hash(input: &str) -> u32 {
 }
 
 fn main() -> Result<(), Error> {
+
+    let mut tt: HashMap<u32, Vec<u32>> = HashMap::new();
+    let final_counts = em::expection_maximization(&tt);
+    println!("Expected counts: {:?}", final_counts);
 
     let matches = cliparameters::cli();
 
