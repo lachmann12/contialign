@@ -28,7 +28,6 @@ use std::collections::hash_map::DefaultHasher;
 
 // cargo build --release
 // "target/release/varconti.exe" --index -f "files/Homo_sapiens.GRCh38.cdna.all.fa" -k 22 -o "output/myindex_24.idx"
-// "target/release/varconti.exe" -f "files/SRR3534129.fastq" -o "output/counts2.tsv -x "output/myindex_24.idx"
 // "target/release/varconti.exe" -f "files/SRR3534129.fastq" -o "output/counts2.tsv" -x "output/myindex_24.idx"
 
 // "external/kallisto.exe" index -i "output/kallisto/human.idx" "files/Homo_sapiens.GRCh38.cdna.all.fa"

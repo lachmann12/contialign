@@ -4,6 +4,13 @@ use std::time::{Instant};
 pub fn expection_maximization(input: &HashMap<u32, Vec<u32>>) -> Vec<f32> {
 
     let mut test: HashMap<Vec<u32>> = HashMap::new();
+    let mut tx = vec![];
+    tx.push(0);
+    tx.push(1);
+    tx.push(1);
+    tx.push(2);
+    tx.push(2);
+
 
 
     let mut input: Vec<Vec<u32>> = vec![];
