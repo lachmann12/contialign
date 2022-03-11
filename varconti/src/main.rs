@@ -48,10 +48,6 @@ pub fn hash(input: &str) -> u32 {
 
 fn main() -> Result<(), Error> {
 
-    let mut tt: HashMap<u32, Vec<u32>> = HashMap::new();
-    let final_counts = em::expection_maximization(&tt);
-    println!("Expected counts: {:?}", final_counts);
-
     let matches = cliparameters::cli();
 
     // IO parameters
@@ -104,27 +100,21 @@ fn main() -> Result<(), Error> {
         indexscan::index_stats(&transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length);
 
         println!("{}", format!("[{}] Align reads | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), fastq_file, kmer_length).blue());
-        let (line_count, transcript_counts_unique, transcript_counts, unique_count) = align::read_fastq(fastq_file, kmer_length, &eq_classes, &eq_elements, &kmer_offset, step_size, sensitivity);
+        let (line_count, alignment_matches) = align::read_fastq(fastq_file, kmer_length, &eq_classes, &eq_elements, &kmer_offset, step_size, sensitivity);
         
+        let transcript_counts: Vec<f32> = em::expection_maximization(alignment_matches);
         std::thread::spawn(move || drop(eq_classes));
         std::thread::spawn(move || drop(eq_elements));
 
-        println!("tcl: {}", transcript_counts.len());
-
-        let mut total_count = 0;
+        let mut total_count = 0.0;
         let mut output = File::create(output_counts)?;
         for i in 0..transcripts.len() {
-            if transcript_counts.contains_key(&(i as u32)) {
-                total_count = total_count + transcript_counts.get(&(i as u32)).unwrap();
-                write!(output, "{}\t{}\n", transcripts[i], transcript_counts.get(&(i as u32)).unwrap())?;
-            }
-            else{
-                write!(output, "{}\t{}\n", transcripts[i], 0)?;
-            }
+            total_count = total_count + transcript_counts[i];
+            write!(output, "{}\t{}\n", transcripts[i], transcript_counts[i])?;
         }
 
         println!("{}", format!("[{}] Done! Elapsed time: {}m {}s", Local::now().format("%Y-%m-%d][%H:%M:%S"), now.elapsed().as_millis()/60000, (now.elapsed().as_millis()%60000)/1000).green());
-        println!("{}", format!("Transcripts: {} | Reads: {} | Aligned reads: {} | Unique Reads: {}", transcripts.len(), line_count/4, total_count, unique_count).green());
+        println!("{}", format!("Transcripts: {} | Reads: {} | Aligned reads: {}", transcripts.len(), line_count/4, transcript_counts.len()).green());
     }
     Ok(())
 }

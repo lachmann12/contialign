@@ -1,49 +1,16 @@
 use std::collections::HashMap;
 use std::time::{Instant};
-
-pub fn expection_maximization(input: &HashMap<u32, Vec<u32>>) -> Vec<f32> {
-
-    let mut test: HashMap<Vec<u32>> = HashMap::new();
-    let mut tx = vec![];
-    tx.push(0);
-    tx.push(1);
-    tx.push(1);
-    tx.push(2);
-    tx.push(2);
+use std::collections::BinaryHeap;
 
 
+pub fn expection_maximization(input: Vec<Vec<u32>>) -> Vec<f32> {
 
-    let mut input: Vec<Vec<u32>> = vec![];
-    let mut temp1 = vec![];
-    temp1.push(0);
-    temp1.push(1);
-    temp1.push(2);
-
-    let mut temp2 = vec![];
-    temp2.push(0);
-    temp2.push(1);
-
-    let mut temp3 = vec![];
-    temp3.push(2);
-    temp3.push(3);
-    temp3.push(4);
-
-    let mut temp4 = vec![];
-    temp4.push(0);
-    temp4.push(3);
-    temp4.push(4);
-
-    input.push(temp1);
-    input.push(temp2);
-    input.push(temp3);
-    input.push(temp4);
-
-    let mut final_counts = vec![1.0; 5];
+    let mut final_counts = vec![1.0; input.len()];
     
     let now = Instant::now();
 
     for i in 0..100 {
-        let mut new_final_counts = vec![0.0; 5];
+        let mut new_final_counts = vec![0.0; input.len()];
         for v in input.clone() {
             let mut gene_sum = 0.0;
             for j in v.clone() {
@@ -56,7 +23,32 @@ pub fn expection_maximization(input: &HashMap<u32, Vec<u32>>) -> Vec<f32> {
         final_counts = new_final_counts.clone();
     }
 
-    println!("EM time: {}", now.elapsed().as_millis());
-
     return final_counts;
+}
+
+fn most_frequent(array: &Vec<u32>) -> (Vec<u32>, u32) {
+
+    let mut map:HashMap<u32, u32> = HashMap::new();
+
+    for value in array {
+        *map.entry(*value).or_insert(0) += 1;
+    }
+
+    let heap: BinaryHeap<_> = map.values().collect();
+    let max = heap.peek().unwrap();
+
+    let top_elements = find_keys_for_value(&map, max);
+
+    let mut result = vec![];
+    for e in top_elements {
+        result.push(e.clone());
+    }
+    
+    return (result, **max);
+}
+
+fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'a u32> {
+    map.iter()
+        .filter_map(|(key, &val)| if &val == value { Some(key) } else { None })
+        .collect()
 }
