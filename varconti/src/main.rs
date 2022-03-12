@@ -102,7 +102,7 @@ fn main() -> Result<(), Error> {
         println!("{}", format!("[{}] Align reads | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), fastq_file, kmer_length).blue());
         let (line_count, alignment_matches) = align::read_fastq(fastq_file, kmer_length, &eq_classes, &eq_elements, &kmer_offset, step_size, sensitivity);
         
-        let transcript_counts: Vec<f32> = em::expection_maximization(alignment_matches);
+        let transcript_counts: Vec<f32> = em::expection_maximization(alignment_matches, transcripts.len());
         std::thread::spawn(move || drop(eq_classes));
         std::thread::spawn(move || drop(eq_elements));
 
