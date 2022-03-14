@@ -78,10 +78,10 @@ fn main() -> Result<(), Error> {
     if build_index{
         println!("{}", format!("[{}] Build index | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), input_file, kmer_length).blue());
         
-        let (transcripts, eq_classes, eq_elements, transcript_kmers) = parsefa::read_fa(input_file, kmer_length);
+        let (transcripts, eq_classes, eq_elements, transcript_kmers, transcript_length) = parsefa::read_fa(input_file, kmer_length);
 
         println!("{}", format!("[{}] Save to file | {}", Local::now().format("%Y-%m-%d][%H:%M:%S"), output_file).blue());
-        serializer::serialize(&(output_file.to_string()), &transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length, &version)?;
+        serializer::serialize(&(output_file.to_string()), &transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length, &version, &transcript_length)?;
         println!("{}", format!("[{}] Done! Elapsed time: {}m {}s", Local::now().format("%Y-%m-%d][%H:%M:%S"), now.elapsed().as_millis()/60000, (now.elapsed().as_millis()%60000)/1000).green());
         println!("{}", format!("Transcripts: {} | EQ Classes: {} | EQ Elements: {}", transcripts.len(), eq_classes.len(), eq_elements.len()).green());
         
@@ -94,7 +94,7 @@ fn main() -> Result<(), Error> {
         let now = Instant::now();
         
         println!("{}", format!("[{}] Load index | {}", Local::now().format("%Y-%m-%d][%H:%M:%S"), index_file).blue());
-        let (kmer_length, transcripts, eq_elements, eq_classes, transcript_kmers) = serializer::deserialize(&(index_file.to_string()));
+        let (kmer_length, transcripts, eq_elements, eq_classes, transcript_kmers, transcript_length) = serializer::deserialize(&(index_file.to_string()));
         println!("[{}] Index | k: {} | T: {} | EQC: {} | EQE: {}", Local::now().format("%Y-%m-%d][%H:%M:%S"), kmer_length, transcripts.len(), eq_classes.len(), eq_elements.len());
         
         indexscan::index_stats(&transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length);
@@ -102,7 +102,7 @@ fn main() -> Result<(), Error> {
         println!("{}", format!("[{}] Align reads | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), fastq_file, kmer_length).blue());
         let (line_count, alignment_matches) = align::read_fastq(fastq_file, kmer_length, &eq_classes, &eq_elements, &kmer_offset, step_size, sensitivity);
         
-        let transcript_counts: Vec<f32> = em::expection_maximization(alignment_matches, transcripts.len());
+        let transcript_counts: Vec<f32> = em::expection_maximization(alignment_matches, transcripts.len(), transcript_length);
         std::thread::spawn(move || drop(eq_classes));
         std::thread::spawn(move || drop(eq_elements));
 

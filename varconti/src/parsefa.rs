@@ -13,7 +13,7 @@ extern crate chrono;
 use chrono::Local;
 use colored::*;
 
-pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>) {
+pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>, Vec<usize>) {
 
     let mut transcript_kmers: HashMap<u32, u32> = HashMap::new();
     let mut eq_classes: HashMap<u32, u32> = HashMap::new();
@@ -147,7 +147,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     println!("EQ elements: {}", eq_elements.len());
     println!("Avg length elements: {}", sum_elements/eq_elements.len());
     println!("final counter (max element): {}", counter);
-    return (transcripts, eq_classes, eq_elements, transcript_kmers);
+    return (transcripts, eq_classes, eq_elements, transcript_kmers, transcript_length);
 }
 
 pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {

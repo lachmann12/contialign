@@ -5,7 +5,7 @@ use std::io::Write;
 
 use terminal_spinners::{SpinnerBuilder, BOUNCE};
 
-pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32) -> std::io::Result<()> {
+pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32, transcript_length: &usize) -> std::io::Result<()> {
 
     let handle = SpinnerBuilder::new().spinner(&BOUNCE).text(" Serializing transcripts ... ").start();
 
@@ -45,13 +45,19 @@ pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &Hash
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
+    handle.text(" Serializing transcript length ... ");
+    let bytes = rkyv::to_bytes::<_, 256>(transcript_length).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    file.write_all(&bytes_size)?;
+    file.write_all(&bytes)?;
+
     handle.text(" Index serialized ");
     handle.stop_and_clear();
 
     Ok(())
 }
 
-pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u32>>, HashMap<u32, u32>, HashMap<u32, u32>) {
+pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u32>>, HashMap<u32, u32>, HashMap<u32, u32>, Vec<usize>) {
     let handle = SpinnerBuilder::new().spinner(&BOUNCE).text(" Loading index ... ").start();
 
     let mbytes = std::fs::read(filename).unwrap();
@@ -88,9 +94,16 @@ pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u3
     let classes_end = (trans_kmer_end+blength as usize +8) as usize;
     let archived = unsafe { rkyv::archived_root::<HashMap<u32, u32>>(&mbytes[(trans_kmer_end+8)..classes_end]) };
     let eq_classes: HashMap<u32, u32> = archived.deserialize(&mut rkyv::Infallible).unwrap();
+
+    handle.text(" Initializing Transcript length ... ");
+    let archived = unsafe { rkyv::archived_root::<u64>(&mbytes[classes_end..(classes_end+8)]) };
+    let blength: u64 = archived.deserialize(&mut rkyv::Infallible).unwrap();
+    let transcript_length_end = (classes_end+blength as usize +8) as usize;
+    let archived = unsafe { rkyv::archived_root::<HashMap<u32, u32>>(&mbytes[(classes_end+8)..transcript_length_end]) };
+    let transcript_length: Vec<usize> = archived.deserialize(&mut rkyv::Infallible).unwrap();
     
     handle.text(" Index serialized ");
     handle.stop_and_clear();
 
-    return (kmer_size, transcripts, eq_elements, eq_classes, transcrip_kmer_count);
+    return (kmer_size, transcripts, eq_elements, eq_classes, transcript_length);
 }
