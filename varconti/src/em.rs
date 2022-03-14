@@ -7,7 +7,7 @@ use std::collections::hash_map::DefaultHasher;
 extern crate libc;
 use std::mem;
 
-pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, transcript_lengths: Vec<u32>) -> Vec<f32> {
+pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, transcript_lengths: Vec<usize>) -> Vec<f32> {
 
     let mut ec_counts: HashMap<u32, f32> = HashMap::new();
     let mut ec_map: HashMap<u32, Vec<u32>> = HashMap::new();
@@ -59,11 +59,11 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
             else {
                 let mut gene_sum = 0.0;
                 for j in 0..v.len() {
-                    gene_sum += final_counts[v[j]]/transcript_length[v[j]];
+                    gene_sum += final_counts[v[j]]/transcript_lengths[v[j]];
                 }
                 
                 for j in 0..v.len() {
-                    let temp = final_counts[v[j]]/gene_sum*transcript_length[v[j]];
+                    let temp = final_counts[v[j]]/gene_sum*transcript_lengths[v[j]];
                     if temp < 0.00000000001 {
                         new_final_counts[v[j]] = 0.0;
                     }
