@@ -7,7 +7,7 @@ use std::collections::hash_map::DefaultHasher;
 extern crate libc;
 use std::mem;
 
-pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize) -> Vec<f32> {
+pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, transcript_lengths: Vec<u32>) -> Vec<f32> {
 
     let mut ec_counts: HashMap<u32, f32> = HashMap::new();
     let mut ec_map: HashMap<u32, Vec<u32>> = HashMap::new();

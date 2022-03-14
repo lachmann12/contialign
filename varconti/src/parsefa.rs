@@ -18,6 +18,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     let mut transcript_kmers: HashMap<u32, u32> = HashMap::new();
     let mut eq_classes: HashMap<u32, u32> = HashMap::new();
     let mut eq_elements: HashMap<u32, Vec<u32>> = HashMap::new();
+    let mut transcript_length: Vec<usize> = vec![];
     let mut all = 0;
     
     let mut sequence_count = 0;
@@ -57,6 +58,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
                 pb.set(counter as u64);
                 
                 let kmers = split_kmers(&seq, kmer_length);
+                transcript_length.push(seq.len());
 
                 for j in 0..kmers.len() {
                     total += 1;
