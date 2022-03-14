@@ -99,7 +99,7 @@ pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u3
     let archived = unsafe { rkyv::archived_root::<u64>(&mbytes[classes_end..(classes_end+8)]) };
     let blength: u64 = archived.deserialize(&mut rkyv::Infallible).unwrap();
     let transcript_length_end = (classes_end+blength as usize +8) as usize;
-    let archived = unsafe { rkyv::archived_root::<HashMap<u32, u32>>(&mbytes[(classes_end+8)..transcript_length_end]) };
+    let archived = unsafe { rkyv::archived_root::Vec<usize>(&mbytes[(classes_end+8)..transcript_length_end]) };
     let transcript_length: Vec<usize> = archived.deserialize(&mut rkyv::Infallible).unwrap();
     
     handle.text(" Index serialized ");
