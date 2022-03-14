@@ -35,8 +35,13 @@ pub fn index_stats(transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq
     }
     
     let mut output = File::create("output/transcript_info_40.tsv")?;
-    for k in temp_map.keys() {
-        write!(output, "{}\t{}\t{}\n", transcripts[k.clone() as usize], temp_map.get(k).unwrap(), transcript_kmers.get(k).unwrap())?;
+    for k in transcript_kmers.keys() {
+        if temp_map.contains_key(k) {
+            write!(output, "{}\t{}\t{}\n", transcripts[k.clone() as usize], temp_map.get(k).unwrap(), transcript_kmers.get(k).unwrap())?;
+        }
+        else {
+            write!(output, "{}\t{}\t{}\n", transcripts[k.clone() as usize], 0, transcript_kmers.get(k).unwrap())?;
+        }
     }
 
     for k in temp_map.keys() {
