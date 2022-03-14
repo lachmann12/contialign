@@ -105,5 +105,5 @@ pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u3
     handle.text(" Index serialized ");
     handle.stop_and_clear();
 
-    return (kmer_size, transcripts, eq_elements, eq_classes, transcript_length);
+    return (kmer_size, transcripts, eq_elements, eq_classes, transcrip_kmer_count, transcript_length);
 }
