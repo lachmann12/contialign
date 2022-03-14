@@ -5,7 +5,7 @@ use std::io::Write;
 
 use terminal_spinners::{SpinnerBuilder, BOUNCE};
 
-pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32, transcript_length: &usize) -> std::io::Result<()> {
+pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32, transcript_length: &Vec<usize>) -> std::io::Result<()> {
 
     let handle = SpinnerBuilder::new().spinner(&BOUNCE).text(" Serializing transcripts ... ").start();
 
