@@ -29,7 +29,7 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
         let key = &(ec_keys[k] as u32);
         let v = ec_map.get(key).unwrap();
         
-        if v.len() < 100 {
+        if v.len() < 200 {
             let mut vu = vec![];
             for i in v {
                 vu.push(*i as usize);
@@ -59,12 +59,12 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
             else {
                 let mut gene_sum = 0.0;
                 for j in 0..v.len() {
-                    gene_sum += final_counts[v[j]]/transcript_lengths[v[j]] as f32;
+                    gene_sum += final_counts[v[j]];
                 }
                 
                 for j in 0..v.len() {
-                    let temp = final_counts[v[j]]/gene_sum*transcript_lengths[v[j]] as f32;
-                    if temp < 0.00000000001 {
+                    let temp = final_counts[v[j]]/gene_sum;
+                    if temp < 0.0000000000 {
                         new_final_counts[v[j]] = 0.0;
                     }
                     else{
