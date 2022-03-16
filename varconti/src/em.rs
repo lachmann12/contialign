@@ -59,11 +59,11 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
             else {
                 let mut gene_sum = 0.0;
                 for j in 0..v.len() {
-                    gene_sum += final_counts[v[j]];
+                    gene_sum += transcript_lengths[v[j]]/final_counts[v[j]];
                 }
                 
                 for j in 0..v.len() {
-                    let temp = final_counts[v[j]]/gene_sum;
+                    let temp = final_counts[v[j]]/(gene_sum*transcript_lengths[v[j]]);
                     if temp < 0.0000000000 {
                         new_final_counts[v[j]] = 0.0;
                     }
