@@ -29,7 +29,7 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
         let key = &(ec_keys[k] as u32);
         let v = ec_map.get(key).unwrap();
         
-        if v.len() < 200 {
+        if v.len() < 2 {
             let mut vu = vec![];
             for i in v {
                 vu.push(*i as usize);
