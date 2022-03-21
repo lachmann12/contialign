@@ -47,15 +47,10 @@ pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &Hash
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
-    // test serialize
-    handle.text(" testing Serializing EQ classes ... ");
-    let mut serializer = AllocSerializer::<256>::default();
-    serializer.serialize_value(eq_classes).unwrap();
-    let bytes = serializer.into_serializer().into_inner();
-
     handle.text(" Serializing EQ classes ... ");
     let bytes = rkyv::to_bytes::<_, 64>(eq_classes).unwrap();
     let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
+    handle.text(" Write serialized EQ classes ... ");
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
