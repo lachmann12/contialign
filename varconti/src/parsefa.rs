@@ -171,7 +171,7 @@ pub fn oldhash(input: &str) -> u64 {
 }
 
 pub fn listhash(input: &Vec<u32>) -> u32 {
-    let mut h = FxHasher::default();
+    let mut h = DefaultHasher::default();
     h.write_u32(0);
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
