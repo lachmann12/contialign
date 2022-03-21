@@ -25,6 +25,7 @@ use std::hash::{Hash, Hasher};
 use std::collections::HashMap;
 use std::collections::hash_map::DefaultHasher;
 
+mod kmerhash;
 
 // cargo build --release
 // "target/release/varconti.exe" --index -f "files/Homo_sapiens.GRCh38.cdna.all.fa" -k 22 -o "output/myindex_24.idx"
@@ -74,7 +75,7 @@ fn main() -> Result<(), Error> {
     //let fastq_file = "files/SRR3534129.fastq";
     //let fastq_file = "files/SRR1525256.fastq";
     //let build_index = true;
-
+    
     if build_index{
         println!("{}", format!("[{}] Build index | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), input_file, kmer_length).blue());
         
@@ -118,4 +119,3 @@ fn main() -> Result<(), Error> {
     }
     Ok(())
 }
-
