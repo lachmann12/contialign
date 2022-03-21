@@ -146,6 +146,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64,
     pb.finish_print(&format!("[{}] k-mer hash completed", Local::now().format("%Y-%m-%d][%H:%M:%S")).green());
     println!("");
     println!("Total: {}", total);
+    println!("EQ classes: {}", eq_classes.len());
     println!("EQ elements: {}", eq_elements.len());
     println!("Avg length elements: {}", sum_elements/eq_elements.len());
     println!("final counter (max element): {}", counter);
