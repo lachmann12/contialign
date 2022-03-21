@@ -97,30 +97,11 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
 
                     if matches.len() > 0 {
                         if matches.len() == 1 {
-
                             alignment_matches.push(matches);
-
-                            //let temp = matches[0];
-                            //*transcript_counts.entry(temp).or_insert(0) += 1;
-                            //if is_unique {
-                            //    *transcript_counts_unique.entry(temp).or_insert(0) += 1;
-                            //    unique_counter += 1;
-                            // }
-                            
                         }
                         else {
-                            let (top_transcript, max_count) = most_frequent(&matches);
-                            alignment_matches.push(top_transcript);
-                            //let temp = top_transcript.clone() as u32;
-                            //if max_count > sensitivity {
-                            //    *transcript_counts.entry(temp).or_insert(0) += 1;
-                            //    
-                            //    if is_unique {
-                            //        *transcript_counts_unique.entry(temp).or_insert(0) += 1;
-                            //        unique_counter += 1;
-                            //    }
-                                
-                            //}
+                            let (top_transcripts, max_count) = most_frequent(&matches);
+                            alignment_matches.push(top_transcripts);
                         }
                         break;
                     }
@@ -131,33 +112,15 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
                 
                 if matches.len() > 0 {
                     if matches.len() == 1 {
-                        //let temp = matches[0];
                         alignment_matches.push(matches);
-                        //*transcript_counts.entry(temp).or_insert(0) += 1;
-                        //if is_unique {
-                        //    *transcript_counts_unique.entry(temp).or_insert(0) += 1;
-                        //    unique_counter += 1;
-                        //}
                     }
                     else {
-                        let (top_transcript, max_count) = most_frequent(&matches);
-                        
-                        alignment_matches.push(top_transcript);
-                        //if max_count > sensitivity {
-                            
-                            // fix count to em
-                            //*transcript_counts.entry(temp).or_insert(0) += 1;
-                            //if is_unique {
-                            //   *transcript_counts_unique.entry(temp).or_insert(0) += 1;
-                            //    unique_counter += 1;
-                            //}
-
-                        //}
+                        let (top_transcripts, max_count) = most_frequent(&matches);
+                        alignment_matches.push(top_transcripts);
                     }
                 }
             }
         }
-
         counter = counter+1;
     }
     pb.finish_print(&format!("[{}] alignment completed", Local::now().format("%Y-%m-%d][%H:%M:%S")).green());

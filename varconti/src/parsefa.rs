@@ -19,7 +19,6 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     let mut eq_classes: HashMap<u32, u32> = HashMap::new();
     let mut eq_elements: HashMap<u32, Vec<u32>> = HashMap::new();
     let mut transcript_length: Vec<usize> = vec![];
-    let mut all = 0;
     
     let mut sequence_count = 0;
     let f = BufReader::new(File::open(input_file).unwrap());
@@ -73,6 +72,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
                             // 4. Insert new set in eq_classes_map if does not exist
                             let mut elements = eq_elements.get_mut(&elements_pointer).unwrap().clone();
                             
+                            // test if element already in eqc
                             let mut testin = false;
                             for k in 0..elements.len() {
                                 if elements[k] == counter{
@@ -109,11 +109,10 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
                     else {
                         eq_classes.insert(kmer_hash, counter.clone());
                     }
-                    all = all+1;
                 }
 
                 transcript_kmers.insert(counter, kmers.len() as u32);
-                counter += 1;
+                counter = counter + 1;
             }
 
             first = false;
