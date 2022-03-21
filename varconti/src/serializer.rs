@@ -16,38 +16,38 @@ pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &Hash
       .open(filename)
       .unwrap();
 
-    let bytes_size = rkyv::to_bytes::<_, 256>(index_version).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(index_version).unwrap();
     file.write_all(&bytes_size)?;
 
-    let bytes_size = rkyv::to_bytes::<_, 256>(kmer_length).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(kmer_length).unwrap();
     file.write_all(&bytes_size)?;
 
-    let bytes = rkyv::to_bytes::<_, 256>(transcripts).unwrap();
-    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    let bytes = rkyv::to_bytes::<_, 64>(transcripts).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
     handle.text(" Serializing EQ elements ... ");
-    let bytes = rkyv::to_bytes::<_, 256>(eq_elements).unwrap();
-    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    let bytes = rkyv::to_bytes::<_, 64>(eq_elements).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
     handle.text(" Serializing Transcript kmer count ... ");
-    let bytes = rkyv::to_bytes::<_, 256>(transcript_kmers).unwrap();
-    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    let bytes = rkyv::to_bytes::<_, 64>(transcript_kmers).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
     handle.text(" Serializing EQ classes ... ");
-    let bytes = rkyv::to_bytes::<_, 256>(eq_classes).unwrap();
-    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    let bytes = rkyv::to_bytes::<_, 64>(eq_classes).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 
     handle.text(" Serializing transcript length ... ");
-    let bytes = rkyv::to_bytes::<_, 256>(transcript_length).unwrap();
-    let bytes_size = rkyv::to_bytes::<_, 256>(&(bytes.len() as u64)).unwrap();
+    let bytes = rkyv::to_bytes::<_, 64>(transcript_length).unwrap();
+    let bytes_size = rkyv::to_bytes::<_, 64>(&(bytes.len() as u64)).unwrap();
     file.write_all(&bytes_size)?;
     file.write_all(&bytes)?;
 

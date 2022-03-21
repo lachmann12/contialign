@@ -26,7 +26,6 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64,
     let mut sequence_count = 0;
     let f = BufReader::new(File::open(input_file).unwrap());
     for line in f.lines() {
-
         let lw = line.unwrap();
         if &lw[..1] == ">" {
             sequence_count += 1;
@@ -92,7 +91,6 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64,
                                     eq_elements.insert(elements_hash, elements);
                                 }
                             }
-                        
                         }
                         else {
                             // new EQ class
