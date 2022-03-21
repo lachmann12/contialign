@@ -16,10 +16,10 @@ use colored::*;
 use fxhash::FxHasher;
 use fxhash;
 
-pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>, Vec<usize>) {
+pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>, Vec<usize>) {
 
     let mut transcript_kmers: HashMap<u32, u32> = HashMap::new();
-    let mut eq_classes: HashMap<u32, u32> = HashMap::new();
+    let mut eq_classes: HashMap<u64, u32> = HashMap::new();
     let mut eq_elements: HashMap<u32, Vec<u32>> = HashMap::new();
     let mut transcript_length: Vec<usize> = vec![];
     
@@ -163,12 +163,12 @@ pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
     return kmers;
 }
 
-pub fn hash(input: &str) -> u32 {
+pub fn hash(input: &str) -> u64 {
     //let mut hasher = FxHasher::default();
     //hasher.write_u32(0);
     //input.hash(&mut hasher);
     //return hasher.finish();
-    return  fxhash::hash32(input);
+    return  fxhash::hash64(input);
 }
 
 pub fn listhash(input: &Vec<u32>) -> u32 {
@@ -178,7 +178,7 @@ pub fn listhash(input: &Vec<u32>) -> u32 {
     return h.finish() as u32;
 }
 
-pub fn purge_disconnected(eq_classes: HashMap<u32, u32>, eq_elements: HashMap<u32, Vec<u32>>) -> (HashMap<u32, u32>, HashMap<u32, Vec<u32>>){
+pub fn purge_disconnected(eq_classes: HashMap<u64, u32>, eq_elements: HashMap<u32, Vec<u32>>) -> (HashMap<u64, u32>, HashMap<u32, Vec<u32>>){
     
     let mut hh = HashSet::new();
     for k in eq_classes.keys() {

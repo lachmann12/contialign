@@ -52,7 +52,7 @@ pub fn remove_n(read: String) -> Vec<String> {
     return result;
 }
 
-pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, _kmer_offset: &u32, step_size: u32, sensitivity: u32) -> (i64, Vec<Vec<u32>>) {
+pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u64, u32>, eq_elements: &HashMap<u32, Vec<u32>>, _kmer_offset: &u32, step_size: u32, sensitivity: u32) -> (i64, Vec<Vec<u32>>) {
 
     let mut transcript_counts_unique: HashMap<u32, u32> = HashMap::new();
     let mut transcript_counts: HashMap<u32, u32> = HashMap::new();
@@ -133,7 +133,7 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u32, 
     return (line_count, alignment_matches)
 }
 
-pub fn get_matches_control(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32, sensitivity: u32) -> (u32, Vec<u32>, bool) {
+pub fn get_matches_control(seq: String, eq_classes: &HashMap<u64, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32, sensitivity: u32) -> (u32, Vec<u32>, bool) {
     let (mut match_counter, mut matches, mut is_unique) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length);
     if match_counter < sensitivity {
         let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/2);
@@ -157,7 +157,7 @@ pub fn get_matches_control(seq: String, eq_classes: &HashMap<u32, u32>, eq_eleme
     return (match_counter, matches, is_unique);
 }
 
-pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32) -> (u32, Vec<u32>, bool){
+pub fn get_matches(seq: String, eq_classes: &HashMap<u64, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32) -> (u32, Vec<u32>, bool){
     
     let mut matches: Vec<u32> = vec![];
     let mut rev_kmer;
@@ -243,10 +243,10 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
         .collect()
 }
 
-pub fn hash(input: &str) -> u32 {
+pub fn hash(input: &str) -> u64 {
     //let mut hasher = FxHasher::default();
     //hasher.write_u32(0);
     //input.hash(&mut hasher);
     //return hasher.finish();
-    return  fxhash::hash32(input);
+    return fxhash::hash64(input);
 }

@@ -5,7 +5,7 @@ use std::io::Write;
 
 use terminal_spinners::{SpinnerBuilder, BOUNCE};
 
-pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u32, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32, transcript_length: &Vec<usize>) -> std::io::Result<()> {
+pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &HashMap<u64, u32>, eq_elements: &HashMap<u32, Vec<u32>>, transcript_kmers: &HashMap<u32, u32>, kmer_length: &u32, index_version: &u32, transcript_length: &Vec<usize>) -> std::io::Result<()> {
 
     let handle = SpinnerBuilder::new().spinner(&BOUNCE).text(" Serializing transcripts ... ").start();
 
@@ -57,7 +57,7 @@ pub fn serialize(filename: &String, transcripts: &Vec<String>, eq_classes: &Hash
     Ok(())
 }
 
-pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u32>>, HashMap<u32, u32>, HashMap<u32, u32>, Vec<usize>) {
+pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u32>>, HashMap<u64, u32>, HashMap<u32, u32>, Vec<usize>) {
     let handle = SpinnerBuilder::new().spinner(&BOUNCE).text(" Loading index ... ").start();
 
     let mbytes = std::fs::read(filename).unwrap();
@@ -92,8 +92,8 @@ pub fn deserialize(filename: &String) -> (u32, Vec<String>,  HashMap<u32, Vec<u3
     let archived = unsafe { rkyv::archived_root::<u64>(&mbytes[trans_kmer_end..(trans_kmer_end+8)]) };
     let blength: u64 = archived.deserialize(&mut rkyv::Infallible).unwrap();
     let classes_end = (trans_kmer_end+blength as usize +8) as usize;
-    let archived = unsafe { rkyv::archived_root::<HashMap<u32, u32>>(&mbytes[(trans_kmer_end+8)..classes_end]) };
-    let eq_classes: HashMap<u32, u32> = archived.deserialize(&mut rkyv::Infallible).unwrap();
+    let archived = unsafe { rkyv::archived_root::<HashMap<u64, u32>>(&mbytes[(trans_kmer_end+8)..classes_end]) };
+    let eq_classes: HashMap<u64, u32> = archived.deserialize(&mut rkyv::Infallible).unwrap();
 
     handle.text(" Initializing Transcript length ... ");
     let archived = unsafe { rkyv::archived_root::<u64>(&mbytes[classes_end..(classes_end+8)]) };
