@@ -97,7 +97,7 @@ fn main() -> Result<(), Error> {
         let (kmer_length, transcripts, eq_elements, eq_classes, transcript_kmers, transcript_length) = serializer::deserialize(&(index_file.to_string()));
         println!("[{}] Index | k: {} | T: {} | EQC: {} | EQE: {}", Local::now().format("%Y-%m-%d][%H:%M:%S"), kmer_length, transcripts.len(), eq_classes.len(), eq_elements.len());
         
-        indexscan::index_stats(&transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length);
+        //indexscan::index_stats(&transcripts, &eq_classes, &eq_elements, &transcript_kmers, &kmer_length);
 
         println!("{}", format!("[{}] Align reads | {} | k={}", Local::now().format("%Y-%m-%d][%H:%M:%S"), fastq_file, kmer_length).blue());
         let (line_count, alignment_matches) = align::read_fastq(fastq_file, kmer_length, &eq_classes, &eq_elements, &kmer_offset, step_size, sensitivity);

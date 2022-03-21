@@ -132,7 +132,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32,
     
     let mut counter2 = 1;
 
-    let (mut eq_classes, mut eq_elements) = purge_disconnected(eq_classes, eq_elements);
+    //let (mut eq_classes, mut eq_elements) = purge_disconnected(eq_classes, eq_elements);
 
     let mut sum_elements = 0;
     for k in eq_elements.keys() {
