@@ -164,7 +164,7 @@ pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
 
 pub fn hash(input: &str) -> u64 {
     let mut hasher = DefaultHasher::default();
-    hasher.write_u32(0);
+    //hasher.write_u32(0);
     input.hash(&mut hasher);
     return hasher.finish();
     //return  fxhash::hash64(input);

@@ -245,7 +245,7 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
 
 pub fn hash(input: &str) -> u64 {
     let mut hasher = DefaultHasher::default();
-    hasher.write_u32(0);
+    //hasher.write_u32(0);
     input.hash(&mut hasher);
     return hasher.finish();
     //return fxhash::hash64(input);
