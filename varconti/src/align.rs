@@ -151,10 +151,6 @@ pub fn get_matches_control(seq: String, eq_classes: &HashMap<u32, u32>, eq_eleme
         is_unique = is_unique_t;
     }
 
-    if match_counter < sensitivity {
-
-    }
-
     return (match_counter, matches, is_unique);
 }
 
@@ -189,7 +185,7 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
                     matches = vec![];
                     matches.push(*p);
                     is_unique = true;
-                    break;
+                    //break;
                 }
             }
         }
@@ -213,7 +209,7 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
                     matches = vec![];
                     matches.push(*p);
                     is_unique = true;
-                    break;
+                    //break;
                 }
             }
         }
