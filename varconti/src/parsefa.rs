@@ -164,12 +164,14 @@ pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
 
 pub fn hash(input: &str) -> u32 {
     let mut hasher = FxHasher::default();
+    hasher.write_u32(0);
     input.hash(&mut hasher);
     return hasher.finish() as u32;
 }
 
 pub fn listhash(input: &Vec<u32>) -> u32 {
     let mut h = FxHasher::default();
+    h.write_u32(0);
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
 }

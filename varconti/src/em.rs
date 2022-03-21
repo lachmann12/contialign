@@ -119,6 +119,7 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
 
 pub fn listhash(input: &Vec<u32>) -> u32 {
     let mut h = FxHasher::default();
+    h.write_u32(0);
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
 }
