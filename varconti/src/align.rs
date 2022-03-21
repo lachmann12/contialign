@@ -15,7 +15,8 @@ use chrono::Local;
 use colored::*;
 use std::time::Duration;
 
-use fxhash::FxHasher;
+use fxhash::FxHasher32;
+use fxhash;
 
 pub fn reverse_read(read: String) -> String {
     let s:String = read.chars()
@@ -192,8 +193,7 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
             }
         }
         
-        if false {
-        //if !pos_mode {
+        if !pos_mode {
             if i == 0 {
                 rev_seq = reverse_read(seq.clone());
             }
@@ -244,8 +244,9 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
 }
 
 pub fn hash(input: &str) -> u32 {
-    let mut hasher = FxHasher::default();
-    hasher.write_u32(0);
-    input.hash(&mut hasher);
-    return hasher.finish() as u32;
+    //let mut hasher = FxHasher::default();
+    //hasher.write_u32(0);
+    //input.hash(&mut hasher);
+    //return hasher.finish();
+    return  fxhash::hash32(input);
 }
