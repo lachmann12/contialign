@@ -13,7 +13,7 @@ extern crate chrono;
 use chrono::Local;
 use colored::*;
 
-use fxhash::FxHash;
+use fxhash::FxHasher;
 
 pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u32, u32>, HashMap<u32, Vec<u32>>, HashMap<u32, u32>, Vec<usize>) {
 
@@ -163,7 +163,7 @@ pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
 }
 
 pub fn hash(input: &str) -> u32 {
-    let mut hasher = FxHasher::new();
+    let mut hasher = FxHasher::default();
     input.hash(&mut hasher);
     return hasher.finish() as u32;
 }
