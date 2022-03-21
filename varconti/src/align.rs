@@ -192,7 +192,8 @@ pub fn get_matches(seq: String, eq_classes: &HashMap<u32, u32>, eq_elements: &Ha
             }
         }
         
-        if !pos_mode {
+        if false {
+        //if !pos_mode {
             if i == 0 {
                 rev_seq = reverse_read(seq.clone());
             }
