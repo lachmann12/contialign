@@ -7,6 +7,8 @@ use std::collections::hash_map::DefaultHasher;
 extern crate libc;
 use std::mem;
 
+use fxhash::FxHasher;
+
 pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, transcript_lengths: Vec<usize>) -> Vec<f32> {
 
     let mut ec_counts: HashMap<u32, f32> = HashMap::new();
@@ -116,7 +118,7 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
 }
 
 pub fn listhash(input: &Vec<u32>) -> u32 {
-    let mut h = DefaultHasher::new();
+    let mut h = FxHasher::new();
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
 }
