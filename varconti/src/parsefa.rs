@@ -246,7 +246,7 @@ pub fn convert<T: PartialEq + From<u8> + BitXor<Output=T> + Shl<Output=T> + Clon
 
 pub fn listhash(input: Vec<u32>) -> u32 {
     let s = format!("{:?}", input);
-    let mut hasher = DefaultHasher::default();
+    let mut hasher = FxHasher::default();
     hasher.write_u32(0);
     &s.hash(&mut hasher);
     return hasher.finish() as u32;
