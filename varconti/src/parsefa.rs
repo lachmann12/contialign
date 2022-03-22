@@ -85,7 +85,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64,
                             if !testin {
                                 elements.push(counter);
                                 elements.sort();
-                                let elements_hash = listhash(&elements);
+                                let elements_hash = listhash(elements.clone());
                                 eq_classes.insert(kmer_hash, elements_hash);
                                 if !eq_elements.contains_key(&elements_hash) {
                                     eq_elements.insert(elements_hash, elements);
@@ -99,7 +99,7 @@ pub fn read_fa(input_file: &str, kmer_length: u32) -> (Vec<String>, HashMap<u64,
                             elements.push(counter.clone());
                             elements.sort();
 
-                            let elements_hash: u32 = listhash(&elements);
+                            let elements_hash: u32 = listhash(elements.clone());
                             eq_classes.insert(kmer_hash, elements_hash);
                             
                             if !eq_elements.contains_key(&elements_hash) {
@@ -170,7 +170,7 @@ pub fn oldhash(input: &str) -> u64 {
     //return  fxhash::hash64(input);
 }
 
-pub fn listhash(input: &Vec<u32>) -> u32 {
+pub fn oldlisthash(input: &Vec<u32>) -> u32 {
     let mut h = DefaultHasher::default();
     h.write_u32(0);
     Hash::hash_slice(input, &mut h);
@@ -192,8 +192,6 @@ pub fn purge_disconnected(eq_classes: HashMap<u64, u32>, eq_elements: HashMap<u3
     }
     return (eq_classes, eqtemp);
 }
-
-
 
 use std::cmp::PartialEq;
 use std::ops::BitXor;
@@ -244,4 +242,12 @@ pub fn convert<T: PartialEq + From<u8> + BitXor<Output=T> + Shl<Output=T> + Clon
         .fold(T::from(0), |result, &bit| {
             (result << T::from(1)) ^ T::from(bit)
         }))
+}
+
+pub fn listhash(input: Vec<u32>) -> u32 {
+    let s = format!("{:?}", input);
+    let mut hasher = DefaultHasher::default();
+    hasher.write_u32(0);
+    &s.hash(&mut hasher);
+    return hasher.finish() as u32;
 }

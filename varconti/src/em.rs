@@ -15,7 +15,7 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
     let mut ec_map: HashMap<u32, Vec<u32>> = HashMap::new();
 
     for v in input.clone() {
-        let temp = listhash(&v);
+        let temp = listhash(v.clone());
         *ec_counts.entry(temp).or_insert(0.0) += 1.0;
         ec_map.insert(temp, v);
     }
@@ -117,9 +117,17 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
         .collect()
 }
 
-pub fn listhash(input: &Vec<u32>) -> u32 {
+pub fn oldlisthash(input: &Vec<u32>) -> u32 {
     let mut h = DefaultHasher::default();
     h.write_u32(0);
     Hash::hash_slice(input, &mut h);
     return h.finish() as u32;
+}
+
+pub fn listhash(input: Vec<u32>) -> u32 {
+    let s = format!("{:?}", input);
+    let mut hasher = DefaultHasher::default();
+    hasher.write_u32(0);
+    &s.hash(&mut hasher);
+    return hasher.finish() as u32;
 }
