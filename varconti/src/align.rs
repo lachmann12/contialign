@@ -229,11 +229,11 @@ fn most_frequent(array: &Vec<u32>) -> (Vec<u32>, u32) {
     let heap: BinaryHeap<_> = map.values().collect();
     let max = heap.peek().unwrap();
     let top_elements = find_keys_for_value(&map, max).to_vec();
-
     let mut result = vec![];
     for e in top_elements {
         result.push(e.clone());
     }
+    result.sort();
     return (result, **max);
 }
 
@@ -243,7 +243,7 @@ fn find_keys_for_value<'a>(map: &'a HashMap<u32, u32>, value: &'a u32) -> Vec<&'
         .collect()
 }
 
-pub fn oldhash(input: &str) -> u64 {
+pub fn hash(input: &str) -> u64 {
     let mut hasher = DefaultHasher::default();
     //hasher.write_u32(0);
     input.hash(&mut hasher);
@@ -256,7 +256,7 @@ use std::cmp::PartialEq;
 use std::ops::BitXor;
 use std::ops::Shl;
 
-pub fn hash(input: &str) -> u64 {
+pub fn oldhash(input: &str) -> u64 {
     let mut bits: Vec<u8> = vec![0; 64];
     let mut counter: usize = 0;
     for c in input.chars() {

@@ -162,7 +162,7 @@ pub fn split_kmers(sequence: &str, kmer_length: u32) -> Vec<String> {
     return kmers;
 }
 
-pub fn oldhash(input: &str) -> u64 {
+pub fn hash(input: &str) -> u64 {
     let mut hasher = DefaultHasher::default();
     //hasher.write_u32(0);
     input.hash(&mut hasher);
@@ -197,7 +197,7 @@ use std::cmp::PartialEq;
 use std::ops::BitXor;
 use std::ops::Shl;
 
-pub fn hash(input: &str) -> u64 {
+pub fn oldhash(input: &str) -> u64 {
     let mut bits: Vec<u8> = vec![0; 64];
     let mut counter: usize = 0;
     for c in input.chars() {
