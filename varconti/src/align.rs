@@ -134,7 +134,7 @@ pub fn read_fastq(input_file: &str, kmer_length: u32, eq_classes: &HashMap<u64, 
 }
 
 pub fn get_matches_control(seq: String, eq_classes: &HashMap<u64, u32>, eq_elements: &HashMap<u32, Vec<u32>>, kmer_length: u32, step_size: u32, sensitivity: u32) -> (u32, Vec<u32>, bool) {
-    let (mut match_counter, mut matches, mut is_unique) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length);
+    let (mut match_counter, mut matches, mut is_unique) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, 1);
     if match_counter < sensitivity {
         let (match_counter_t, matches_t, is_unique_t) = get_matches(seq.clone(), eq_classes, eq_elements, kmer_length, kmer_length/2);
         match_counter = match_counter_t;
