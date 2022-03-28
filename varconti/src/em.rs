@@ -46,7 +46,7 @@ pub fn expection_maximization(input: Vec<Vec<u32>>, transcript_length: usize, tr
 
     let now = Instant::now();
 
-    for i in 0..1000 {
+    for i in 0..2 {
         
         let mut new_final_counts: Vec<f32> = vec![0.0; transcript_length];
         
