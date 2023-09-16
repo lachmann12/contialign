@@ -4,3 +4,5 @@
 *.h5
 *.tsv
 varconti/target/*
+*/target/*
+*.DS_Store

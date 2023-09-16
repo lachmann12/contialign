@@ -1,0 +1,25 @@
+pub fn cli<'a>() -> clap::ArgMatches<'a> {
+    clap::App::new("benchmark")
+      .version("0.0.1")
+      .author("Alexander Lachmann <alexander.lachmann@gmail.com>")
+      .about("Fast hash based aligner, with the ambition to be better.")
+      .arg(
+        clap::Arg::with_name("input-file")
+          .value_name("FILE")
+          .short("f")
+          .long("input-file")
+          .takes_value(true)
+          .required(true)
+          .help("The gene count input file with genes as rows and samples as columns")
+      )
+      .arg(
+        clap::Arg::with_name("k-mer")
+          .value_name("KMER")
+          .short("k")
+          .long("kmer")
+          .takes_value(true)
+          .required(false)
+          .help("Length of k-mer sequences, defaults to 22")
+      )
+      .get_matches()
+}

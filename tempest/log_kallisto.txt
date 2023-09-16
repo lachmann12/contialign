@@ -1,0 +1,50 @@
+time: external/kallisto.exe: Permission denied
+        0.00 real         0.00 user         0.00 sys
+              950272  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                  67  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                   1  involuntary context switches
+             1105526  instructions retired
+             1405249  cycles elapsed
+              869056  peak memory footprint
+
+[quant] fragment length distribution is truncated gaussian with mean = 200, sd = 20
+[index] k-mer length: 31
+[index] number of targets: 205,541
+[index] number of k-mers: 116,665,775
+[index] number of equivalence classes: 845,580
+[quant] running in single-end mode
+[quant] will process file 1: files/SRR3534129.fastq
+[quant] finding pseudoalignments for the reads ... done
+[quant] processed 2,584,276 reads, 1,138,703 reads pseudoaligned
+[   em] quantifying the abundances ... done
+[   em] the Expectation-Maximization algorithm ran for 990 rounds
+
+       72.89 real        65.59 user         5.47 sys
+          3681656832  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             2800193  page reclaims
+                 237  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  65  voluntary context switches
+               25278  involuntary context switches
+        349828820086  instructions retired
+        228125488425  cycles elapsed
+          3910957376  peak memory footprint

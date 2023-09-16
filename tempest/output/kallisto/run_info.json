@@ -1,0 +1,13 @@
+{
+	"n_targets": 271742,
+	"n_bootstraps": 0,
+	"n_processed": 11492683,
+	"n_pseudoaligned": 11081520,
+	"n_unique": 2046653,
+	"p_pseudoaligned": 96.4,
+	"p_unique": 17.8,
+	"kallisto_version": "0.46.1",
+	"index_version": 10,
+	"start_time": "Mon Aug 28 02:39:20 2023",
+	"call": "external/kallisto quant -i output/kallisto/human_syn.idx -t 8 -o output/kallisto/ --single -l 200 -s 20 ../synthetic/syndata.fastq"
+}
